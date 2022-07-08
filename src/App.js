@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 import React, { useState, useEffect } from "react";
 import NotesList from "./components/NotesList";
 import { nanoid } from "nanoid";
@@ -26,28 +27,50 @@ function App() {
     },
   ]);
 
-  {
-    /** searching text and toggle mode */
-  }
+{/** searching text and toggle mode */ }
   const [searchNote, setSearchNote] = useState("");
   const [darkMode, setDarkMode] = useState(false);
 
+{/** to sotre or save the data in local storage even after closing tab */}
+useEffect(()=>{
+  const savedNotes = JSON.parse(localStorage.getItem('react-notes-app-data'))
+  if (savedNotes){
+    setNotes(savedNotes)
+  }
+},[])
+{/*this is for saving the app data in local storage*/}
+useEffect(()=>{
+  localStorage.setItem('react-notes-app-data',JSON.stringify(notes))},[notes])
+
+{/*this function is for adding new note*/}
+const addNote=(text)=>{
+  const date = new Date();
+  const newNote ={
+    id: nanoid(),
+    text: text,
+    date: date.toLocaleDateString
+  }
+  const newNotes = [...notes,newNote]
+  setNotes(newNotes)
+}
+
+{/*this function is for deleting notes in note app with a id*/}
+const deletingNote = (id) =>{
+  const newNotes = notes.filter((note) => note.id!==id);
+  setNotes(newNotes)
+}
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={""} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={`${darkMode && 'dark-mode'}`}>
+     <div className="container">
+      <Header handleToggleDarkMode={setDarkMode}/>
+      <Search handleSearch={setSearchNote}/>
+      <NotesList notes={notes.filter((note)=>note.text.toLowerCase().includes(searchNote))}
+       handleAddNote={addNote} handleDelete={deletingNote}/>
+
+       
+     </div>
     </div>
   );
 }

@@ -20,3 +20,4 @@ function Note({id, text, date, handleDelete}){
         </div>
     )
 }
+export default Note
